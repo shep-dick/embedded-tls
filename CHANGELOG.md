@@ -22,8 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking:** `AlpnProtocolNameList::protocols` is a `heapless::Vec<&[u8], MAX_ALPN_PROTOCOLS>`
   rather than a slice. Offering more than `MAX_ALPN_PROTOCOLS` (8) ALPN protocols now returns
   `TlsError::OutOfMemory` when the ClientHello is encoded, instead of silently truncating.
-- Fix: `defmt` builds combining `webpki` failed to compile: the signature log used the
-  `core::fmt` `{:x?}` hint, which defmt rejects.
+- Fix: the `webpki` signature log used the `core::fmt` `{:x?}` hint, which defmt rejects
+  at macro expansion. (Combining `defmt` with `webpki` still does not build: `webpki`'s
+  own error types do not implement `defmt::Format`.)
 - Fix: unencrypted alerts were sent with the `ChangeCipherSpec` content type instead of
   `Alert`, so an alert raised before handshake keys existed was never seen as one.
 - Fix: ignore unknown `NamedGroup`s in supported_groups (RFC 8446 section 9.3). Fixes #163.
